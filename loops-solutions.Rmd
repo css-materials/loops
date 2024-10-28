@@ -1,0 +1,84 @@
+---
+title: "Loops"
+output: html_document
+date: "2024-10-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# FOR LOOPS
+
+Write a for loop that iterates over the numbers 1 to 5 and prints the cube of each number
+
+```{r}
+# option 1
+for (i in 1:5) {
+  print(i^3)
+}
+```
+
+```{r}
+# option 2
+for (i in c(1,2,3,4,5)) {
+  print(i^3)
+}  
+```
+
+
+Write a for loop that calculates the MAXIMUM value in each column of diamonds. Hint: use `max()`
+
+```{r}
+data(diamonds)
+diamonds
+```
+
+```{r}
+output <- vector(mode = "double", length = length(diamonds))
+
+for(i in seq_along(diamonds)){
+  output[i] <- max(diamonds[[i]])
+}
+output
+```
+
+
+# MAP()
+
+Write a `map()` function to calculate the MAXIMUM value in each column of diamonds
+```{r}
+map_dbl(diamonds, max)
+```
+
+
+Write a `map()` function to calculate the MEAN for every column in diamonds. Remove missing values from your calculation
+```{r}
+map_dbl(diamonds, mean, na.rm = TRUE)
+```
+
+
+# ACROSS()
+
+Use `across()` with `summarize()` to calculate the MAXIMUM value for every column of diamonds
+```{r}
+diamonds %>%
+  summarize(across(.cols = everything(), .fns = max))
+```
+
+
+Use `across()` with `summarize()` and `group_by()` to calculate the MEAN for every NUMERIC column in diamonds for each""cut"
+```{r}
+diamonds %>%
+  group_by(cut) %>%
+  summarize(across(.cols = where(is.numeric), .fns = mean, na.rm = TRUE))
+```
+
+
+Calculate the COUNT for *every* factor column in the diamonds dataset
+Hint: use `where` https://dplyr.tidyverse.org/dev/articles/colwise.html#multiple-functions
+```{r}
+diamonds %>%
+  count(across(.cols = where(is.factor)))
+```
