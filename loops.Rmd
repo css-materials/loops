@@ -14,17 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Write a for loop that iterates over the numbers 1 to 5 and prints the cube of each number. Hint to calculate cube: run `5^3` in your Console
 
 ```{r}
-# option 1
-for (i in 1:5) {
-  print(i^3)
-}
-```
 
-```{r}
-# option 2
-for (i in c(1,2,3,4,5)) {
-  print(i^3)
-}  
 ```
 
 
@@ -37,12 +27,7 @@ diamonds
 ```
 
 ```{r}
-output <- vector(mode = "double", length = length(diamonds))
 
-for(i in seq_along(diamonds)){
-  output[i] <- max(diamonds[[i]])
-}
-output
 ```
 
 
@@ -50,13 +35,13 @@ output
 
 Write a `map()` function to calculate the MAXIMUM value in each column of diamonds
 ```{r}
-map_dbl(diamonds, max)
+
 ```
 
 
 Write a `map()` function to calculate the MEAN for every column in diamonds. Remove missing values from your calculation
 ```{r}
-map_dbl(diamonds, mean, na.rm = TRUE)
+
 ```
 
 
@@ -64,24 +49,20 @@ map_dbl(diamonds, mean, na.rm = TRUE)
 
 Use `across()` with `summarize()` to calculate the MAXIMUM value for every column of diamonds
 ```{r}
-diamonds %>%
-  summarize(across(.cols = everything(), .fns = max))
+
 ```
 
 
 Use `across()` with `summarize()` and `group_by()` to calculate the MEAN for every NUMERIC column in diamonds for each""cut"
 ```{r}
-diamonds %>%
-  group_by(cut) %>%
-  summarize(across(.cols = where(is.numeric), .fns = mean, na.rm = TRUE))
+
 ```
 
 
 Calculate the COUNT for *every* factor column in the diamonds dataset
 Hint: use `where` https://dplyr.tidyverse.org/dev/articles/colwise.html#multiple-functions
 ```{r}
-diamonds %>%
-  count(across(.cols = where(is.factor)))
+
 ```
 
 
@@ -127,44 +108,5 @@ penguins %>%
 ```{r}
 # code rewritten with a for loop 
 
-# create copy of data to avoid modifying the original
-pen <- penguins
 
-# initialize a new column for mass categories and fill that column with NA 
-pen$mass_category <- NA_character_
-
-# check data type of column (should be a vector!)
-class(pen$mass_category)
-is.vector(pen$mass_category)
-
-# write the for loop
-for (i in seq_along(penguins$body_mass_g)) {  # for (i in 1:nrow(pen))
-  mass <- pen$body_mass_g[i]
-  if (is.na(mass)) {
-    pen$mass_category[i] <- NA_character_
-  } else if (mass > 5000) {
-    pen$mass_category[i] <- "Large"
-  } else if (mass >= 4000 & mass <= 5000) {
-    pen$mass_category[i] <- "Medium"
-  } else {
-    pen$mass_category[i] <- "Small"
-  }
-}
-
-# Group by mass_category and calculate the average flipper length
-pen %>%
-  group_by(mass_category) %>%
-  summarize(
-    avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE)
-  )
 ```
-
-# Take Home from this last exercise:
-
-While we demonstrated that it is possible to rewrite data frame operations like this one with a for loop, it’s *generally* not the best idea to do so, especially when the dataframe is large (many rows) or you are nesting conditional operations within the loop. 
-
-We end up with two issues: (1) more difficult code to read for humans, and (2) slower code to execute (this is because we iterate row by row in a data frame and we also check for different conditions). Recall: R is optimized for vectorized operations vs. element-by-element iteration.
-
-Even using if / else statements is not the best approach here given our goal (e.g., manipulate variables based on conditions inside a data frame). The best approach in this case is to avoid if / else statements and for loops and use `case_when()` and `ifelse()` instead since they handle vectorized operations more efficiently and concisely (see previous lecture in-class exercises for more).
-
-Control structures programming concepts are best applied to cases outside of data frames (e.g., handling lists, custom iterative processes, etc.) or when working outside the `tidyverse` entirely.
